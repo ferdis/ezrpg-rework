@@ -1,6 +1,8 @@
 <?php
-//This file cannot be viewed, it must be included
-defined('IN_EZRPG') or exit;
+
+// This file cannot be viewed, it must be included
+if (!defined('IN_EZRPG'))
+    exit;
 
 /*
   Title: Config
@@ -46,7 +48,7 @@ define('SECRET_KEY', '692SdIZ3wVm?xzCod9r:zK]#');
   DEBUG_MODE - Turn on to show database errors and debug information.
 */
 define('DB_PREFIX', 'ezrpg_');
-define('VERSION', '1.0');
+define('VERSION', '2.0');
 define('SHOW_ERRORS', 0);
 define('DEBUG_MODE', 0);
 ?>
