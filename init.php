@@ -1,15 +1,17 @@
 <?php
-//This page cannot be viewed, it must be included
-defined('IN_EZRPG') or exit;
 
-//Start Session
+// This page cannot be viewed, it must be included
+if (!defined('IN_EZRPG'))
+    exit;
+
+// Start Session
 session_start();
 
 //Headers
 //header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 //header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
-require_once 'config.php';
+require_once('config.php');
 
 //Show errors?
 (SHOW_ERRORS == 0)?error_reporting(0):error_reporting(E_ALL);
@@ -26,17 +28,15 @@ require_once(CUR_DIR . '/lib.php');
 
 
 //Database
-try
-{
-    $db = DbFactory::factory($config_driver, $config_server, $config_username, $config_password, $config_dbname);
+try {
+    $db = DbFactory::factory($config);
 }
-catch (DbException $e)
-{
+catch (DbException $e) {
     $e->__toString();
 }
 
-//Database password no longer needed, unset variable
-unset($config_password);
+// Database connection is made, delete configuration.
+unset($config);
 
 
 //HTML Purifier Config

@@ -1,8 +1,6 @@
 <?php
-
-// This file cannot be viewed, it must be included
-if (!defined('IN_EZRPG'))
-    exit;
+//This file cannot be viewed, it must be included
+defined('IN_EZRPG') or exit;
 
 /*
   Title: Config
@@ -13,17 +11,23 @@ if (!defined('IN_EZRPG'))
   Variables: Database Connection
   Connection settings for the database.
   
-  $config_server - Database server
-  $config_dbname - Database name
-  $config_username - Username to login to server with
-  $config_password - Password to login to server with
-  $config_driver - Contains the database driver to use to connect to the database.
+  $config - Array containing database connection details.
+  server - Database server
+  database - Database name
+  username - Username to login to server with
+  password - Password to login to server with
+  driver - Contains the database driver to use to connect to the database.
+  prefix - Prefix for database tables
 */
-$config_server = 'localhost';
-$config_dbname = 'ezrpg';
-$config_username = 'root';
-$config_password = '';
-$config_driver = 'mysql';
+
+$config = array(
+    'server'    => 'localhost',
+    'database'  => 'ezrpg',
+    'username'  => 'root',
+    'password'  => '',
+    'prefix'    => 'ez_',
+    'driver'    => 'mysql'
+);
 
 /*
   Constant:
@@ -35,20 +39,18 @@ $config_driver = 'mysql';
   
   SECRET_KEY - A long string of random characters.
 */
-define('SECRET_KEY', '692SdIZ3wVm?xzCod9r:zK]#');
+define('SECRET_KEY', '/DmuUn7VZKz@1#W4)2g8e>u!');
 
 
 /*
   Constants: Settings
   Various settings used in ezRPG.
   
-  DB_PREFIX - Prefix to the table names
   VERSION - Version of ezRPG
   SHOW_ERRORS - Turn on to show PHP errors.
   DEBUG_MODE - Turn on to show database errors and debug information.
 */
-define('DB_PREFIX', 'ezrpg_');
-define('VERSION', '2.0');
+define('VERSION', '1.0');
 define('SHOW_ERRORS', 0);
 define('DEBUG_MODE', 0);
 ?>
