@@ -55,11 +55,6 @@ function isPassword($password)
 */
 function isEmail($email)
 {
-    return filter_var(
-             filter_var(
-               $email,
-               FILTER_SANITIZE_EMAIL
-             ),
-             FILTER_VALIDATE_EMAIL);
+    return filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 ?>
