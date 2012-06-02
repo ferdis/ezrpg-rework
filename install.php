@@ -308,11 +308,11 @@ else if ($_GET['act'] == '3')
         if ($errors == 0)
         {
             include 'config.php';
-            mysql_connect($config_server, $config_username, $config_password);
-            mysql_select_db($config_dbname);
+            mysql_connect($config['server'], $config['username'], $config['password']);
+            mysql_select_db($config['database']);
             
             $secret_key = createKey(16);
-            $query = 'INSERT INTO `' . DB_PREFIX . 'players` (`username`, `password`, `email`, `secret_key`, `registered`, `rank`) VALUES(\'' . mysql_real_escape_string($_POST['username']) . '\', \'' . mysql_real_escape_string(sha1($secret_key . $_POST['password'] . SECRET_KEY)) . '\', \'' . mysql_real_escape_string($_POST['email']) . '\', \'' . mysql_real_escape_string($secret_key) . '\', ' . time() . ', 10)';
+            $query = 'INSERT INTO `' . $config['prefix'] . 'players` (`username`, `password`, `email`, `secret_key`, `registered`, `rank`) VALUES(\'' . mysql_real_escape_string($_POST['username']) . '\', \'' . mysql_real_escape_string(sha1($secret_key . $_POST['password'] . SECRET_KEY)) . '\', \'' . mysql_real_escape_string($_POST['email']) . '\', \'' . mysql_real_escape_string($secret_key) . '\', ' . time() . ', 10)';
             mysql_query($query);
             
             echo '<p>Your admin account has been created! You may now login to the game. You can access the admin panel at <em>/admin</em>.</p>';
