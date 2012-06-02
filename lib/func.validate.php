@@ -55,10 +55,6 @@ function isPassword($password)
 */
 function isEmail($email)
 {
-    if (strlen($email) < 3)
-        return false;
-    if (!preg_match("/^[-!#$%&\'*+\\.\/0-9=?A-Z^_`{|}~]+@([-0-9A-Z]+\.)+([0-9A-Z]){2,4}$/i", $email))
-        return false;
-    return true;
+    return filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 ?>
