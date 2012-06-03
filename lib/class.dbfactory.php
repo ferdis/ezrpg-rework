@@ -41,6 +41,8 @@ class DbFactory {
     public static function factory($config) {
         try {
             include_once(LIB_DIR . '/db.' . $config['driver'] . '.php');
+            
+            $config['driver'] .= '_adapter';
             return call_user_func(
                     array(
                         new ReflectionClass($config['driver']),
