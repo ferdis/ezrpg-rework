@@ -13,8 +13,6 @@ if (!defined('IN_EZRPG'))
   - <DbException>
  */
 
-// The following may be potentially 
-
 class mysqli_adapter {
     /*
       Integer: $query_count
