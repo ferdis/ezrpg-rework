@@ -25,9 +25,9 @@ if (!defined('IN_EZRPG'))
  */
 function createPBKDF2($password, $salt='ezRPG', $global_salt = SECRET_KEY, 
                         $count = 1005, $length = 32, $algorithm = 'sha256') {  
-    $password = implode($salt, $password);
+    $password = $salt . $password;
 
-    $kb = $start + $length; 
+    $kb = $length; 
     $derived = '';
     
     for ($block = 1; $block <= $kb; $block++) {
@@ -96,7 +96,7 @@ function createSalt($length) {
   Returns:
   String - The derived hash.
  */
-function createBcrypt($password, $salt='ezRPG', $count=15) {
+function createBcrypt($password, $salt='ezRPG', $count=7) {
     $salt = sprintf('$2a$%02d$%s$', $count, $salt);
     return crypt($password, $salt);    
 }
@@ -113,7 +113,7 @@ function createBcrypt($password, $salt='ezRPG', $count=15) {
   Boolean - true or false.
  */
 function compareBcrypt($origin, $comparison) {
-    if (count($origin) == 2)
+    if (count($origin) == 2) 
         return (createBcrypt($origin[0], $origin[1]) === $comparison);
     else
         return (createBcrypt($origin[0]) === $comparison);
