@@ -1,6 +1,7 @@
 <?php
 //This file cannot be viewed, it must be included
-defined('IN_EZRPG') or exit;
+if (!defined('IN_EZRPG')) 
+    exit;
 
 //Requires
 
@@ -10,6 +11,7 @@ require_once (LIB_DIR . '/func.rand.php');
 require_once (LIB_DIR . '/func.text.php');
 require_once (LIB_DIR . '/func.player.php');
 require_once (LIB_DIR . '/func.validate.php');
+require_once (LIB_DIR . '/func.security.php');
 
 //Classes
 require_once (LIB_DIR . '/class.dbfactory.php');
