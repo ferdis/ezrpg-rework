@@ -9,7 +9,7 @@ if (!defined('IN_EZRPG'))
  */
 
 /*
-  Function: hashPBKDF2
+  Function: createPBKDF2
   Creates a PBKDF2 has from the arguments passed to it.
 
   Paramaters:
@@ -23,32 +23,25 @@ if (!defined('IN_EZRPG'))
   Returns:
   String - The derived key.
  */
-
-function createPBKDF2($password, $salt, $global_salt = SECRET_KEY, 
-                        $count = 1005, $length = 32, $algorithm = 'sha256') {
-    // Introduce custom salt
+function createPBKDF2($password, $salt='ezRPG', $global_salt = SECRET_KEY, 
+                        $count = 1005, $length = 32, $algorithm = 'sha256') {  
     $password = implode($salt, $password);
+
+    $kb = $start + $length; 
+    $derived = '';
     
-    $kb = $start + $length;                           // Key blocks to compute 
-    $derived = '';                                    // Derived key 
-    
-    // Create key 
     for ($block = 1; $block <= $kb; $block++) {
-        // Initial hash for this block 
-        $hash = hash_hmac($algorithm, $global_salt . pack('N', $block), $password, true);
+        $hash = hash_hmac($algorithm, $global_salt . pack('N', $block), 
+                            $password, true);
         $initial_block = $hash;
-        
-        // Perform block iterations 
-        for ($i = 1; $i < $count; $i++) {
-            // XOR each iterate 
-            $initial_block ^= ($h = hash_hmac($algorithm, $hash, $password, true));
-        }
-        
-        // Append iterated block 
-        $derived .= $initial_block; 
+
+        for ($i = 1; $i < $count; $i++) 
+            $initial_block ^= ($h = hash_hmac($algorithm, $hash, 
+                                                $password, true));
+
+        $derived .= $initial_block;
     }
 
-    // Return derived key of correct length 
     return substr($derived, 0, $length);
 }
 
@@ -59,16 +52,70 @@ function createPBKDF2($password, $salt, $global_salt = SECRET_KEY,
   Paramaters:
   $origin - An array, double cell when introducing a salt.
   $comparison - A PBKDF2 hash representation of a password.
-  $algorithm - Algorithm to apply on hash.
 
   Returns:
   Boolean - true or false.
  */
+
 function comparePBKDF2($origin, $comparison) {
-    if (count($origin) == 2) 
-        return (createPBKDF2 ($origin[0], $origin[1]) === $comparison);
+    if (count($origin) == 2)
+        return (createPBKDF2($origin[0], $origin[1]) === $comparison);
     else
         return (createPBKDF2($origin[0]) === $comparison);
 }
 
+/*
+  Function: createSalt
+  Creates a random salt to be used for hashing.
+
+  Paramaters:
+  $length - Amount of bytes that should be returned.
+
+  Returns:
+  String - A random string.
+ */
+function createSalt($length) {
+    $byte = array();
+    for ($i = 0; $i <= $length; $i++) {
+        $mockup = sha1(microtime());
+        $rand = mt_rand(0, (strlen($mockup) - 1));
+        $byte[] = substr($mockup, $rand, ($rand + 1));
+    }    
+    return implode($byte);
+}
+
+/*
+  Function: createBcrypt
+  Creates a Bcrypt has from the arguments passed to it.
+
+  Paramaters:
+  $password - The string/password to apply the Bcrypt algorithm to.
+  $salt - A string to be used as a salt.
+  $count - Possitive integer for how many times the hash should be iterated.
+
+  Returns:
+  String - The derived hash.
+ */
+function createBcrypt($password, $salt='ezRPG', $count=15) {
+    $salt = sprintf('$2a$%02d$%s$', $count, $salt);
+    return crypt($password, $salt);    
+}
+
+/*
+  Function: compareBcrypt
+  Compares two Bcrypt passwords.
+
+  Paramaters:
+  $origin - An array, double cell when introducing a salt.
+  $comparison - A Bcrypt hash representation of a password.
+
+  Returns:
+  Boolean - true or false.
+ */
+function compareBcrypt($origin, $comparison) {
+    if (count($origin) == 2)
+        return (createBcrypt($origin[0], $origin[1]) === $comparison);
+    else
+        return (createBcrypt($origin[0]) === $comparison);
+}
 ?>
