@@ -16,6 +16,7 @@ function hook_check_session($db, &$tpl, $player, $args = 0)
         {
             //Select player details
             $player = $db->fetchRow('SELECT * FROM `<ezrpg>players` WHERE `id`=?', array($_SESSION['userid']));
+                        
             $tpl->assign('player', $player);
             
             //Set logged-in flag

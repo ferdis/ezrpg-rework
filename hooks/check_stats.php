@@ -26,11 +26,19 @@ function hook_check_stats($db, &$tpl, $player, $args = 0)
     {
         $db->execute('UPDATE `<ezrpg>players` SET `energy`=?, `hp`=? WHERE `id`=?', array($args->energy, $args->hp, $args->id));
     }
+
+    $args->hp_percentage = ($args->hp <= 0) ? 
+                                0 : 
+                                floor(($args->max_hp / $args->hp) * 100);
     
-    $args->hp_percentage = floor(($args->max_hp / $args->hp) * 100);
     // Do not display EXP as 100% if percentage is ~ 99.6%
-    $args->exp_percentage = ceil(($args->max_exp / $args->exp) * 100);
-    $args->energy_percentage = floor(($args->max_energy / $args->energy) * 100);
+    $args->exp_percentage = ($args->exp <= 0) ?
+                                0 :
+                                ceil(($args->max_exp / $args->exp) * 100);
+    
+    $args->energy_percentage = ($args->energy <= 0) ? 
+                                0 :
+                                floor(($args->max_energy / $args->energy) * 100);
 
     return $args;
 }

@@ -51,6 +51,6 @@ define('SECRET_KEY', '/DmuUn7VZKz@1#W4)2g8e>u!');
   DEBUG_MODE - Turn on to show database errors and debug information.
 */
 define('VERSION', '0.1');
-define('SHOW_ERRORS', 0);
+define('SHOW_ERRORS', 1);
 define('DEBUG_MODE', 0);
 ?>
