@@ -42,11 +42,18 @@
 <div id="sidebar">
 <strong>Level</strong>: {$player->level}<br />
 <strong>Gold</strong>: {$player->money}<br />
-
-<img src="bar.php?width=140&type=exp" alt="EXP: {$player->exp} / {$player->max_exp}" /><br />
-<img src="bar.php?width=140&type=hp" alt="HP: {$player->hp} / {$player->max_hp}" /><br />
-<img src="bar.php?width=140&type=energy" alt="Energy: {$player->energy} / {$player->max_energy}" /><br />
-
+<div class="bar">
+    <div class="inner" style="width: {$player->exp_percentage}%"></div>
+    <div class="text">EXP: {$player->exp} / {$player->max_exp}</div>
+</div>
+<div class="bar">
+    <div class="inner" style="width: {$player->hp_percentage}%"></div>
+    <div class="text">HP: {$player->hp} / {$player->max_hp}</div>
+</div>
+<div class="bar">
+    <div class="inner" style="width: {$player->energy_percentage}%"></div>
+    <div class="text">Energy: {$player->energy} / {$player->max_energy}</div>
+</div>
 {if $new_logs > 0}
 <a href="index.php?mod=EventLog" class="red"><strong>{$new_logs} New Log Events!</strong></a>
 {/if}

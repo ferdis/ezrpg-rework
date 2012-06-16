@@ -199,3 +199,27 @@ img {
 	margin: 2px;
 	margin-bottom: 10px;
 }
+
+.bar {
+    height: 15px;
+    width: 140px;
+    background-color: red;
+    margin: 5px 3px;
+}
+
+.bar .inner {
+    height: 15px;
+    background-color: green;
+}
+
+.bar .text {
+    position: relative;
+    top: -15px;
+    height: 15px;
+    line-height: 15px;
+    width: 140px;
+    text-align: center;
+    font-size: 9px;
+    color: #FFF;
+    font-weight: 600;
+}

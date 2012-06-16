@@ -26,7 +26,7 @@ $config = array(
     'username'  => 'root',
     'password'  => '',
     'prefix'    => 'ez_',
-    'driver'    => 'mysql'
+    'driver'    => 'mysqli'
 );
 
 /*
@@ -50,7 +50,7 @@ define('SECRET_KEY', '/DmuUn7VZKz@1#W4)2g8e>u!');
   SHOW_ERRORS - Turn on to show PHP errors.
   DEBUG_MODE - Turn on to show database errors and debug information.
 */
-define('VERSION', '1.0');
+define('VERSION', '0.1');
 define('SHOW_ERRORS', 0);
 define('DEBUG_MODE', 0);
 ?>
