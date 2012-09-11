@@ -1,6 +1,8 @@
 <?php
-//This file cannot be viewed, it must be included
-defined('IN_EZRPG') or exit;
+            
+// This file cannot be viewed, it must be included
+if (!defined('IN_EZRPG'))
+    exit;
 
 /*
   Title: Config
@@ -23,10 +25,10 @@ defined('IN_EZRPG') or exit;
 $config = array(
     'server'    => 'localhost',
     'database'  => 'ezrpg',
-    'username'  => 'root',
-    'password'  => '',
+    'username'  => 'ezrpg',
+    'password'  => 'apples',
     'prefix'    => 'ez_',
-    'driver'    => 'mysqli'
+    'driver'    => 'mysql'
 );
 
 /*
@@ -39,7 +41,7 @@ $config = array(
   
   SECRET_KEY - A long string of random characters.
 */
-define('SECRET_KEY', '/DmuUn7VZKz@1#W4)2g8e>u!');
+define('SECRET_KEY', '6a]yKj%t[W%bgqabrG0&Bo!}');
 
 
 /*
@@ -50,7 +52,7 @@ define('SECRET_KEY', '/DmuUn7VZKz@1#W4)2g8e>u!');
   SHOW_ERRORS - Turn on to show PHP errors.
   DEBUG_MODE - Turn on to show database errors and debug information.
 */
-define('VERSION', '0.1');
-define('SHOW_ERRORS', 1);
+define('VERSION', '2.0');
+define('SHOW_ERRORS', 0);
 define('DEBUG_MODE', 0);
 ?>

@@ -1,2 +1,2 @@
-config.php
+# We don't really want to have templates under version control
 smarty/templates_c
