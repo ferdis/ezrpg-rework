@@ -1,0 +1,13 @@
+Backwards Compatibility: 
+Although attempted, there is currently no guarantee of backwards compatibility with original ezRPG versions.
+
+For a complete list of all changes since last release, please see https://github.com/nands/ezrpg/commits/master. 
+
+Version 0.1a (N/A)
+ - Changed image bars to use only CSS
+ - Added MySQL Improved adapter
+ - Changed the way in which database adapters are initialized
+ - Improved email validation in validate library
+ - Implemented PBKDF2 hashing algorithm
+ - Implemented bcrypt hashing algorithm 
+ - Added passwords hashing performance test module
