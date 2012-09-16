@@ -47,7 +47,7 @@ $tpl->cache_dir    = CUR_DIR . '/templates/.cache/';
 $player = false;
 
 // Create a hooks object
-$hooks = new Hooks($db, $tpl, $player);
+$hooks = new Hooks($db, $config, $tpl, $player);
 
 // Include all hook files
 $hook_files = glob(HOOKS_DIR . '/*.*.php');

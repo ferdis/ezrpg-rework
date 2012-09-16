@@ -6,11 +6,11 @@ defined('IN_EZRPG') or exit(1);
 $hooks->add_hook('player', 'check_session', 0);
 
 //Player hook to check the session and get player data
-function hook_check_session($db, &$tpl, $player, $args = 0) {
+function hook_check_session($db, $config, &$tpl, $player, $args = 0) {
     
     // we follow a "guilty" until proven otherwise approach.
 	$authenticated = false;
-    
+	
     if (array_key_exists('userid', $_SESSION) && array_key_exists('hash', $_SESSION)) {
         
         // The cliemt has prompted that they have authorization details.
@@ -22,12 +22,12 @@ function hook_check_session($db, &$tpl, $player, $args = 0) {
 			
             $tpl->assign('player', $player);
             
-            //Set logged-in flag
+            // Set logged-in flag
             $authenticated = true;
 			
 			// check the last time the user was active.
-			// if they weren't active for five minutes, prompt for password again.
-			if ($_SESSION['last_active'] < (time() - 60*5)) {
+			// if they weren't active for a certain time period, prompt for password again.
+			if ($_SESSION['last_active'] < (time() - $config['security']['session_timeout'])) {
 				if (!in_array($_GET['mod'], array('SessionExpired', 'Logout'))) {
 					$_SESSION['last_page'] = $_SERVER['REQUEST_URI'];
 					header('location: index.php?mod=SessionExpired');

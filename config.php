@@ -32,7 +32,8 @@ $config = array(
         'driver'    => 'mysql'
     ),
     'security' => array(
-        'hashing'   => 2
+        'hashing'			=> 2,
+		'session_timeout'	=> 5*60
     )
 );
 

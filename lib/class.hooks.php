@@ -32,6 +32,12 @@ class Hooks
     protected $hooks;
     
     /*
+      Variable: $config
+      An array containing configuration variables.
+    */
+    protected $config;
+	
+    /*
       Function: __construct
       The constructor takes in database, template and player variables to pass onto any hook functions called.
       
@@ -40,11 +46,12 @@ class Hooks
       $tpl - A smarty object.
       $player - A player result set from the database, or 0 if not logged in.
     */
-    public function __construct(&$db, &$tpl, &$player = 0)
+    public function __construct(&$db, $config, &$tpl, &$player = 0)
     {
         $this->db = &$db;
         $this->tpl = &$tpl;
         $this->player = &$player;
+		$this->config = $config;
         
         $this->hooks = array();
     }
@@ -117,7 +124,7 @@ class Hooks
                     continue;
 
                 //Hook should have a return value
-                $func_args = call_user_func($call_func, $this->db, $this->tpl, $this->player, $func_args);
+                $func_args = call_user_func($call_func, $this->db, $this->config, $this->tpl, $this->player, $func_args);
             }
         }
         

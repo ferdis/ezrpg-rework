@@ -3,7 +3,7 @@ defined('IN_EZRPG') or exit;
 
 $hooks->add_hook('player', 'level_up', 2);
 
-function hook_level_up($db, &$tpl, $player, $args = 0)
+function hook_level_up($db, $config, &$tpl, $player, $args = 0)
 {
     //No player data
     if ($args === 0 || LOGGED_IN == false)
