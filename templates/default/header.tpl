@@ -6,7 +6,7 @@
 		
 		<link rel="stylesheet" href="static/default/style.css" type="text/css" />
 		
-		<script src="static/scripts/ext/jquery/jquery.1.8.1.min"></script>
+		<script src="static/scripts/ext/jquery/jquery.1.8.1.min.js"></script>
 		<title>{$TITLE|default:"ezRPG rework"}</title>
 	</head>
 	<body>
