@@ -20,6 +20,9 @@ class Module_Index extends Base_Module
         }
         else
         {
+            if (array_key_exists('msg', $_GET))
+                    $this->tpl->assign('MSG', $_GET['msg']);
+            
             $this->tpl->display('index.tpl');
         }
     }

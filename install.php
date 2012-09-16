@@ -1,142 +1,146 @@
 <?php
+
 error_reporting(0);
 define('IN_EZRPG', true);
 include './lib/func.rand.php';
 
-function displayHeader()
-{
-    echo <<<HEAD
+function displayHeader() {
+	echo <<<HEAD
 <html>
 <head>
 <title>ezRPG Installation</title>
 <link rel="stylesheet" href="static/default/style.css" type="text/css" />
 <style>
-#content
-{
-  width: 50%;
-  margin: auto;
-  font: 1.0em Verdana, Arial, Sans-serif;
-  color: #444;
-  padding: 10px;
-  border: 1px solid #3182C0;
+#content {
+	padding: 15px;
+}
+
+#time {
+	font-size: 24px;
+	margin-top: 15px;
 }
 </style>
 </head>
 
-<body>
-<div id="content">
-<h1>ezRPG Installation</h1>
+<div id="wrapper">
+
+			<div id="header">
+				<span id="title"><a href="#">ezRPG <span>rework</span></a></span>
+				<span id="time">
+					0.1b</span>
+			</div>
+
+			<div id="nav"><ul><li><a href="#">Installation</a></li></ul></ul>
+			</div>
+			<div id="body_wrap">
+				<div id="content">
 
 HEAD;
 }
 
-function displayFooter()
-{
-    echo <<<FOOT
-</div>
-</body>
+function displayFooter() {
+	echo <<<FOOT
+				</div>
+			</div>
+
+			<div id="footer"></div>
+			<div id="copyright">
+				<a href="index.php?mod=Legal">Terms of Service</a> | <a href="index.php?mod=Legal&act=Privacy">Privacy Policy</a><br />
+				Copyright &copy; 2012 <a href="./" target="_parent"><strong>Just Another Game</strong></a>.<br />
+				<small>Powered by <a href="https://github.com/nands/ezrpg" target="_blank">ezRPG rework</a>.</small>
+			</div>
+
+		</div>
+
+	</body>
 </html>
+
 FOOT;
 }
 
-if (!isset($_GET['act']))
-{
-    if (!is_writable('config.php') || !is_writable('smarty/templates_c'))
-    {
-        displayHeader();
-        echo '<h2>Step 1</h2>';
-        echo '<p>Please make sure the following files and folders are writable:';
-        echo '<strong>config.php</strong><br />';
-        echo '<strong>smarty/templates_c</strong><br />';
-        echo '<\p>';
-        echo '<p>';
-        echo 'The below folders are optional to make writable:<br />';
-        echo '<strong>lib/ext/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer</strong>';
-        echo '<strong>lib/ext/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer/HTML</strong>';
-        echo '<strong>lib/ext/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer/URI</strong>';
-        echo '</p>';
-        echo '<p>';
-        echo '<br />Chmod those files and folders to 0755 or 0777.</p>';
-        echo '<p><a href="install.php">Click here to check again</a></p>';
-        displayFooter();
-        exit;
-    }
-    else
-    {
-        displayHeader();
-        echo '<h2>Step 1</h2>';
-        echo '<p>You have given the files/folders the correct file permissions.</p>';
-        echo '<p><a href="install.php?act=2">Continue to next step</a></p>';
-        displayFooter();
-        exit;
-    }
-}
-else if ($_GET['act'] == '2')
-{
-    displayHeader();
-    echo '<h2>Step 2</h2>';
-    
-    if (!isset($_POST['submit']))
-    {
-        $dbhost = 'localhost';
-        $dbname = 'ezrpg';
-        $dbuser = '';
-        $dbpass = '';
-        $dbprefix = '';
-    }
-    else
-    {
-        $errors = 0;
-        $msg = '';
-        
-        if (isset($_POST['dbhost']) && empty($_POST['dbhost']))
-        {
-            $errors = 1;
-            $msg .= 'You need to enter a host name!<br />';
-        }
-        if (isset($_POST['dbname']) && empty($_POST['dbname']))
-        {
-            $errors = 1;
-            $msg .= 'You need to enter a database name!<br />';
-        }
-        if (isset($_POST['dbuser']) && empty($_POST['dbuser']))
-        {
-            $errors = 1;
-            $msg .= 'You need to enter a database user!<br />';
-        }
-        
-        //so far so good...
-        if ($errors == 0)
-        {
-            //let's test the connection
-            $db = mysql_connect($_POST['dbhost'], $_POST['dbuser'], $_POST['dbpass']);
-            if (!$db)
-            {
-                $errors = 1;
-                $msg .= 'ezRPG could not connect to the database with the details you entered!<br />';
-            }
-            else
-            {
-                $db_selected = mysql_select_db($_POST['dbname']);
-                if (!$db_selected)
-                {
-                    $errors = 1;
-                    $msg .= 'ezRPG could not select the database with the database name you entered!<br />';
-                }
-            }
-        }
-        
-        if ($errors == 0)
-        {
-            //No problesm connecting and selecting the database
-            //Save details to the config file and fill the database
-            $dbhost = $_POST['dbhost'];
-            $dbname = $_POST['dbname'];
-            $dbuser = $_POST['dbuser'];
-            $dbpass = $_POST['dbpass'];
-            $dbprefix = $_POST['dbprefix'];
-            //fill the database first
-            $query1 = <<<QUERY
+if (!isset($_GET['act'])) {
+	if (!is_writable('config.php') || !is_writable('templates/.compiled')) {
+		displayHeader();
+		echo '<h2>Step 1</h2>';
+		echo '<p>Please make sure the following files and folders are writable:<br />';
+		echo '<strong>config.php</strong><br />';
+		echo '<strong>templates/.compiled</strong><br />';
+		echo '<\p>';
+		echo '<p>';
+		echo 'The below folders are optional to make writable:<br />';
+		echo '<strong>lib/ext/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer</strong>';
+		echo '<strong>lib/ext/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer/HTML</strong>';
+		echo '<strong>lib/ext/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer/URI</strong>';
+		echo '</p>';
+		echo '<p>';
+		echo '<br />Chmod those files and folders to 0755 or 0777.</p>';
+		echo '<p><a href="install.php">Click here to check again</a></p>';
+		displayFooter();
+		exit;
+	} else {
+		displayHeader();
+		echo '<h2>Step 1</h2>';
+		echo '<p>You have given the files/folders the correct file permissions.</p>';
+		echo '<p><a href="install.php?act=2">Continue to next step</a></p>';
+		displayFooter();
+		exit;
+	}
+} else if ($_GET['act'] == '2') {
+	displayHeader();
+	echo '<h2>Step 2</h2>';
+
+	if (!isset($_POST['submit'])) {
+		$dbhost = 'localhost';
+		$dbname = 'ezrpg';
+		$dbuser = '';
+		$dbpass = '';
+		$dbprefix = '';
+	} else {
+		$errors = 0;
+		$msg = '';
+
+		if (isset($_POST['dbhost']) && empty($_POST['dbhost'])) {
+			$errors = 1;
+			$msg .= 'You need to enter a host name!<br />';
+		}
+		if (isset($_POST['dbname']) && empty($_POST['dbname'])) {
+			$errors = 1;
+			$msg .= 'You need to enter a database name!<br />';
+		}
+		if (isset($_POST['dbuser']) && empty($_POST['dbuser'])) {
+			$errors = 1;
+			$msg .= 'You need to enter a database user!<br />';
+		}
+
+		//so far so good...
+		if ($errors == 0) {
+			//let's test the connection
+			$db = mysql_connect($_POST['dbhost'], $_POST['dbuser'], $_POST['dbpass']);
+			if (!$db) {
+				$errors = 1;
+				$msg .= 'ezRPG could not connect to the database with the details you entered!<br />';
+			} else {
+				$db_selected = mysql_select_db($_POST['dbname']);
+				if (!$db_selected) {
+					$errors = 1;
+					$msg .= 'ezRPG could not select the database with the database name you entered!<br />';
+				}
+			}
+		}
+
+		if ($errors == 0) {
+			//No problesm connecting and selecting the database
+			//Save details to the config file and fill the database
+			$dbhost = $_POST['dbhost'];
+			$dbname = $_POST['dbname'];
+			$dbuser = $_POST['dbuser'];
+			$dbpass = $_POST['dbpass'];
+			$dbprefix = $_POST['dbprefix'];
+
+			$hashing = $_POST['hashing'];
+
+			//fill the database first
+			$query1 = <<<QUERY
 CREATE TABLE IF NOT EXISTS `{$dbprefix}players` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `username` varchar(30) default NULL,
@@ -168,9 +172,9 @@ CREATE TABLE IF NOT EXISTS `{$dbprefix}players` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 QUERY;
-            mysql_query($query1) or die('Something went wrong.');
-            
-            $query2 = <<<QUERY
+			mysql_query($query1) or die('Something went wrong.');
+
+			$query2 = <<<QUERY
 CREATE TABLE IF NOT EXISTS `{$dbprefix}player_log` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `player` int(11) unsigned NOT NULL,
@@ -182,13 +186,13 @@ CREATE TABLE IF NOT EXISTS `{$dbprefix}player_log` (
   KEY `new_logs` (`player`,`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 QUERY;
-            mysql_query($query2) or die('Something went wrong.');
-            
-            echo '<p>Tables installed.</p>';
-            
-            //Save data to config file
-            $secret_key = createKey(24);
-            $config = <<<CONF
+			mysql_query($query2) or die('Something went wrong.');
+
+			echo '<p>Tables installed.</p>';
+
+			//Save data to config file
+			$secret_key = createKey(24);
+			$config = <<<CONF
 <?php
             
 // This file cannot be viewed, it must be included
@@ -214,12 +218,17 @@ if (!defined('IN_EZRPG'))
 */
 
 \$config = array(
-    'server'    => '{$dbhost}',
-    'database'  => '{$dbname}',
-    'username'  => '{$dbuser}',
-    'password'  => '{$dbpass}',
-    'prefix'    => '{$dbprefix}',
-    'driver'    => 'mysql'
+    'database' => array(
+        'server'    => '{$dbhost}',
+        'database'  => '{$dbname}',
+        'username'  => '{$dbuser}',
+        'password'  => '{$dbpass}',
+        'prefix'    => '{$dbprefix}',
+        'driver'    => 'mysqli'
+    ),
+    'security' => array(
+        'hashing'   => {$hashing}
+    )
 );
 
 /*
@@ -243,104 +252,119 @@ define('SECRET_KEY', '{$secret_key}');
   SHOW_ERRORS - Turn on to show PHP errors.
   DEBUG_MODE - Turn on to show database errors and debug information.
 */
-define('VERSION', '2.0');
+define('VERSION', '0.1b');
 define('SHOW_ERRORS', 0);
 define('DEBUG_MODE', 0);
 ?>
 CONF;
-            file_put_contents('config.php', $config);
-            echo '<p>Config file written.</p>';
-            echo '<p><a href="install.php?act=3">Continue to next step</a></p>';
-            displayFooter();
-            exit;
-        }
-        else
-        {
-            echo '<p><strong>Sorry, there were some problems:</strong><br />', $msg, '</p>';
-            
-            $dbhost = $_POST['dbhost'];
-            $dbname = $_POST['dbname'];
-            $dbuser = $_POST['dbuser'];
-            $dbpass = $_POST['dbpass'];
-            $dbprefix = $_POST['dbprefix'];
-        }
-    }
-    
-    echo '<p>Please fill in the database access details here.</p>';
-    echo '<form method="post" action="install.php?act=2">';
-    echo '<label>Host</label>';
-    echo '<input type="text" name="dbhost" value="', $dbhost, '" />';
-    echo '<label>Database Name</label>';
-    echo '<input type="text" name="dbname" value="', $dbname, '" />';
-    echo '<label>User</label>';
-    echo '<input type="text" name="dbuser" value="', $dbuser, '" />';
-    echo '<label>Password</label>';
-    echo '<input type="password" name="dbpass" value="', $dbpass, '" />';
-    echo '<label>Table Prefix (Optional)</label>';
-    echo '<input type="text" name="dbprefix" value="', $dbprefix, '" />';
-    echo '<p>You can enter a prefix for your table names if you like.<br />This can be useful if you will be sharing the database with other applications, or if you are running more than one ezRPG instance in a single database.</p>';
-    echo '<input type="submit" name="submit" value="Submit"  class="button" />';
-    echo '</form>';
-    displayFooter();
-    exit;
-}
+			file_put_contents('config.php', $config);
+			echo '<p>Config file written.</p>';
+			echo '<p><a href="install.php?act=3">Continue to next step</a></p>';
+			displayFooter();
+			exit;
+		} else {
+			echo '<p><strong>Sorry, there were some problems:</strong><br />', $msg, '</p>';
 
-else if ($_GET['act'] == '3')
-{
-    displayHeader();
-    echo '<h1>Step 3</h1>';
-    
-    if (isset($_POST['submit']))
-    {
-        $errors = 0;
-        $msg = '';
-        if (empty($_POST['username']) || empty($_POST['email']) || empty($_POST['password']) || empty($_POST['password']))
-        {
-            $errors = 1;
-            $msg .= 'You forgot to fill in something!';
-        }
-        if ($_POST['password'] != $_POST['password2'])
-        {
-            $errors = 1;
-            $msg .= 'You didn\'t verify your password correctly.';
-        }
-        
-        if ($errors == 0)
-        {
-            include 'config.php';
-            mysql_connect($config['server'], $config['username'], $config['password']);
-            mysql_select_db($config['database']);
-            
-            $secret_key = createKey(16);
-            $query = 'INSERT INTO `' . $config['prefix'] . 'players` (`username`, `password`, `email`, `secret_key`, `registered`, `rank`) VALUES(\'' . mysql_real_escape_string($_POST['username']) . '\', \'' . mysql_real_escape_string(sha1($secret_key . $_POST['password'] . SECRET_KEY)) . '\', \'' . mysql_real_escape_string($_POST['email']) . '\', \'' . mysql_real_escape_string($secret_key) . '\', ' . time() . ', 10)';
-            mysql_query($query);
-            
-            echo '<p>Your admin account has been created! You may now login to the game. You can access the admin panel at <em>/admin</em>.</p>';
-            echo '<p><strong>Please delete install.php immediately!</strong></p>';
-            echo '<p><a href="index.php">Visit your ezRPG!</a></p>';
-            displayFooter();
-            exit;
-        }
-        else
-        {
-            echo '<p><strong>Sorry, there were some problems:</strong><br />', $msg, '</p>';
-        }
-    }
-    
-    echo '<p>Create your admin account for ezRPG.</p>';
-    echo '<form method="post" action="install.php?act=3">';
-    echo '<label>Username</label>';
-    echo '<input type="text" name="username" value="', $_POST['username'], '" />';
-    echo '<label>Email</label>';
-    echo '<input type="text" name="email" value="', $_POST['email'], '" />';
-    echo '<label>Password</label>';
-    echo '<input type="password" name="password" />';
-    echo '<label>Verify Password</label>';
-    echo '<input type="password" name="password2" />';
-    echo '<br />';
-    echo '<input type="submit" value="Create" name="submit" class="button" />';
-    echo '</form>';
-    displayFooter();
-    exit;
+			$dbhost = $_POST['dbhost'];
+			$dbname = $_POST['dbname'];
+			$dbuser = $_POST['dbuser'];
+			$dbpass = $_POST['dbpass'];
+			$dbprefix = $_POST['dbprefix'];
+		}
+	}
+
+	echo '<form method="post" action="install.php?act=2">';
+	echo '<p>Please select a hashing algorithm to use.</p>';
+	echo '<label>Algorithm</label>';
+	echo '<select name="hashing"><option value="0">Oldschool</option><option value="2">PBKDF2</option><option value="4">bcrypt</option></select><br /><br />';
+	echo '<p>Please fill in the database access details here.</p>';
+	echo '<label>Host</label>';
+	echo '<input type="text" name="dbhost" value="', $dbhost, '" />';
+	echo '<label>Database Name</label>';
+	echo '<input type="text" name="dbname" value="', $dbname, '" />';
+	echo '<label>User</label>';
+	echo '<input type="text" name="dbuser" value="', $dbuser, '" />';
+	echo '<label>Password</label>';
+	echo '<input type="password" name="dbpass" value="', $dbpass, '" />';
+	echo '<label>Table Prefix (Optional)</label>';
+	echo '<input type="text" name="dbprefix" value="', $dbprefix, '" />';
+	echo '<p>You can enter a prefix for your table names if you like.<br />This can be useful if you will be sharing the database with other applications, or if you are running more than one ezRPG instance in a single database.</p>';
+	echo '<input type="submit" name="submit" value="Submit"  class="button" />';
+	echo '</form>';
+	displayFooter();
+	exit;
+} else if ($_GET['act'] == '3') {
+	displayHeader();
+	echo '<h1>Step 3</h1>';
+
+	if (isset($_POST['submit'])) {
+		$errors = 0;
+		$msg = '';
+		if (empty($_POST['username']) || empty($_POST['email']) || empty($_POST['password']) || empty($_POST['password'])) {
+			$errors = 1;
+			$msg .= 'You forgot to fill in something!';
+		}
+		if ($_POST['password'] != $_POST['password2']) {
+			$errors = 1;
+			$msg .= 'You didn\'t verify your password correctly.';
+		}
+
+		if ($errors == 0) {
+			include 'config.php';
+			include './lib/func.security.php';
+
+			mysql_connect($config['server'], $config['username'], $config['password']);
+			mysql_select_db($config['database']);
+
+			$secret_key = createKey(16);
+			$password = false;
+			switch ($config['security']['hashing']) {
+
+				// PBKDF2
+				case 2 :
+					$password = createPBKDF2($_POST['password'], $secret_key);
+					break;
+
+				// bcrypt
+				case 4 :
+					$password = createBcrypt($_POST['password'], $secret_key);
+					break;
+
+				// Oldschool
+				case 0 :
+				default :
+					$password = sha1($secret_key . $_POST['password'] . SECRET_KEY);
+					break;
+			}
+
+			$query = 'INSERT INTO `' . $config['prefix'] . 'players` (`username`, `password`, `email`, `secret_key`, `registered`, `rank`) VALUES(\'' . mysql_real_escape_string($_POST['username']) . '\', \'' . mysql_real_escape_string($password) . '\', \'' . mysql_real_escape_string($_POST['email']) . '\', \'' . mysql_real_escape_string($secret_key) . '\', ' . time() . ', 10)';
+			mysql_query($query);
+
+
+			echo '<p>Your admin account has been created! You may now login to the game. You can access the admin panel at <em>/admin</em>.</p>';
+			echo '<p><strong>Please delete install.php immediately!</strong></p>';
+			echo '<p><a href="index.php">Visit your ezRPG!</a></p>';
+			displayFooter();
+			exit;
+		} else {
+			echo '<p><strong>Sorry, there were some problems:</strong><br />', $msg, '</p>';
+		}
+	}
+
+	echo '<p>Create your admin account for ezRPG.</p>';
+	echo '<form method="post" action="install.php?act=3">';
+	echo '<label>Username</label>';
+	echo '<input type="text" name="username" value="', $_POST['username'], '" />';
+	echo '<label>Email</label>';
+	echo '<input type="text" name="email" value="', $_POST['email'], '" />';
+	echo '<label>Password</label>';
+	echo '<input type="password" name="password" />';
+	echo '<label>Verify Password</label>';
+	echo '<input type="password" name="password2" />';
+	echo '<br />';
+	echo '<input type="submit" value="Create" name="submit" class="button" />';
+	echo '</form>';
+	displayFooter();
+	exit;
 }
 ?>

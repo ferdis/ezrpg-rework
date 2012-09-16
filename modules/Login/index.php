@@ -42,12 +42,34 @@ class Module_Login extends Base_Module
         else
         {
             $player = $this->db->fetch($query);
-            $check = sha1($player->secret_key . $_POST['password'] . SECRET_KEY);
-            if ($check != $player->password)
-            {
+            
+            // We have different authentication methods at our disposal.
+            // Currently, the hashing algorithm is defined in the config file.
+            switch ($this->config['security']['hashing']) {
+                
+                // PBKDF2
+                case 2 :
+                    $check = comparePBKDF2(array($_POST['password'], $player->secret_key), $player->password);
+                    break;
+                
+                // bcrypt
+               case 4 :
+                   $check = compareBcrypt(array($_POST['password'], $player->secret_key), $player->password);
+                   break;
+               
+               // Oldschool
+               case 0 :
+               default :
+                    $check = $player->password === sha1($player->secret_key . $_POST['password'] . SECRET_KEY);
+                    break;
+            }			
+            
+            if ($check !== true) {
+				$errors[] =  'pwd: ' . $player->password . "<Br />" .
+			 'gen: ' . createPBKDF2($_POST['password'], $player->secret_key);
                 $errors[] = 'Please check your username/password!';
                 $error = 1;
-            }
+            } 
         }
         
         if ($error == 0)
@@ -58,10 +80,11 @@ class Module_Login extends Base_Module
             $player = $hooks->run_hooks('login', $player);
             
             $query = $this->db->execute('UPDATE `<ezrpg>players` SET `last_login`=? WHERE `id`=?', array(time(), $player->id));
-            $hash = sha1($player->id . $_SERVER['REMOTE_ADDR'] . SECRET_KEY);
+            
             $_SESSION['userid'] = $player->id;
-            $_SESSION['hash'] = $hash;
-
+            $_SESSION['hash'] = generateSignature();
+            $_SESSION['last_active'] = time();
+			
             $hooks->run_hooks('login_after', $player);
             
             header('Location: index.php');
@@ -69,13 +92,9 @@ class Module_Login extends Base_Module
         }
         else
         {
-            if (isset($_SESSION['hash']))
-                unset($_SESSION['hash']);
+            session_unset();
             
-            if (isset($_SESSION['userid']))
-                unset($_SESSION['userid']);
-            
-            $msg = 'Sorry, you could not login:<br />';
+            $msg = 'Sorry, you could not be logged in:<br />';
             $msg .= '<ul>';
             foreach($errors as $errmsg)
             {

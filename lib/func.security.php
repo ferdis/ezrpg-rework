@@ -118,4 +118,31 @@ function compareBcrypt($origin, $comparison) {
     else
         return (createBcrypt($origin[0]) === $comparison);
 }
+
+
+function generateSignature() {
+    
+    $client = array_key_exists('userid', $_SESSION) ? 
+                    $_SESSION['userid'] : 'guest';
+    
+    $bits = array(
+        'userid'    => $client,
+        'ip'        => $_SERVER['REMOTE_ADDR'],
+        'browser'   => $_SERVER['HTTP_USER_AGENT'],
+        'key'       => SECRET_KEY
+    );
+        
+    $signature = false;
+
+    foreach($bits as $key => $bit) {
+        $signature .= $key . $bit; 
+    }    
+    
+    return sha1($signature);
+}
+
+function compareSignature($origin) {
+    return $origin === generateSignature();
+}
+
 ?>

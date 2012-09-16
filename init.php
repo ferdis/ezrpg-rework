@@ -6,15 +6,14 @@ if (!defined('IN_EZRPG'))
 
 // Start Session
 session_start();
-
-//Headers
-//header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
-//header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
-
 require_once('config.php');
 
+// set up a character encoding.
+ini_set('default_charset', 'UTF-8');
+header('Content-Type: text/html; charset=UTF-8');
+
 //Show errors?
-(SHOW_ERRORS == 0)?error_reporting(0):error_reporting(E_ALL);
+(SHOW_ERRORS == 0) ? error_reporting(0) : error_reporting(E_ALL);
 
 //Constants
 define('CUR_DIR', realpath(dirname(__FILE__)));
@@ -26,51 +25,34 @@ define('HOOKS_DIR', CUR_DIR . '/hooks');
 
 require_once(CUR_DIR . '/lib.php');
 
-
-//Database
+// Database
 try {
-    $db = DbFactory::factory($config);
-}
-catch (DbException $e) {
-    $e->__toString();
+    $db = DbFactory::factory($config['database']);
+} catch (DbException $e) {
+    echo $e->__toString();
+	exit(1);
 }
 
 // Database connection is made, delete configuration.
-unset($config);
+unset($config['database']);
 
-
-//HTML Purifier Config
-$purifier_config = HTMLPurifier_Config::createDefault();
-$purifier_config->set('HTML.Allowed', 'b,a[href],i,br,em,strong,ul,li');
-$purifier_config->set('URI.Base', $_SERVER['DOCUMENT_ROOT']);
-$purifier_config->set('URI.MakeAbsolute', true);
-$purifier_config->set('URI.DisableExternal', true);
-$purifier = new HTMLPurifier($purifier_config);
-
-
-//Smarty
+// Smarty
 $tpl = new Smarty();
-$tpl->template_dir = CUR_DIR . '/smarty/templates/';
-$tpl->compile_dir  = CUR_DIR . '/smarty/templates_c/';
-$tpl->config_dir   = CUR_DIR . '/smarty/configs/';
-$tpl->cache_dir    = CUR_DIR . '/smarty/cache/';
+$tpl->template_dir = CUR_DIR . '/templates/default/';
+$tpl->compile_dir  = CUR_DIR . '/templates/.compiled/';
+$tpl->config_dir   = CUR_DIR . '/templates/.config/';
+$tpl->cache_dir    = CUR_DIR . '/templates/.cache/';
 
-//Initialize $player
-$player = 0;
+// Initialize $player
+$player = false;
 
-//Create a hooks object
+// Create a hooks object
 $hooks = new Hooks($db, $tpl, $player);
 
-//Include all hook files
-$hook_files = scandir(HOOKS_DIR);
-
-foreach($hook_files as $hook_file)
-{
-    $path_parts = pathinfo(HOOKS_DIR . '/' . $hook_file);
-    if ($path_parts['extension'] == 'php' && $path_parts['basename'] != 'index.php')
-        include_once (HOOKS_DIR . '/' . $hook_file);
-}
+// Include all hook files
+$hook_files = glob(HOOKS_DIR . '/*.*.php');
+foreach($hook_files as $hook_file) 
+	require_once($hook_file);
 
 //Run login hooks on player variable
 $player = $hooks->run_hooks('player', 0);
-?>

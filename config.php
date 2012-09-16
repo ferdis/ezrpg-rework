@@ -23,12 +23,17 @@ if (!defined('IN_EZRPG'))
 */
 
 $config = array(
-    'server'    => 'localhost',
-    'database'  => 'ezrpg',
-    'username'  => 'ezrpg',
-    'password'  => 'apples',
-    'prefix'    => 'ez_',
-    'driver'    => 'mysql'
+    'database' => array(
+        'server'    => 'localhost',
+        'database'  => 'ezrpg',
+        'username'  => 'root',
+        'password'  => '',
+        'prefix'    => '',
+        'driver'    => 'mysql'
+    ),
+    'security' => array(
+        'hashing'   => 2
+    )
 );
 
 /*
@@ -41,7 +46,7 @@ $config = array(
   
   SECRET_KEY - A long string of random characters.
 */
-define('SECRET_KEY', '6a]yKj%t[W%bgqabrG0&Bo!}');
+define('SECRET_KEY', 'Bf$M}qcY4CvZXQaBI4X^t}>u');
 
 
 /*
@@ -53,6 +58,6 @@ define('SECRET_KEY', '6a]yKj%t[W%bgqabrG0&Bo!}');
   DEBUG_MODE - Turn on to show database errors and debug information.
 */
 define('VERSION', '2.0');
-define('SHOW_ERRORS', 0);
+define('SHOW_ERRORS', 1);
 define('DEBUG_MODE', 0);
 ?>

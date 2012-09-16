@@ -49,6 +49,9 @@ class Module_Register extends Base_Module
         if (!empty($_GET['email2']))
             $this->tpl->assign('GET_EMAIL2', $_GET['email2']);
 		
+        if (array_key_exists('msg', $_GET)) 
+            $this->tpl->assign('MSG', $_GET['msg']);
+        
         $this->tpl->display('register.tpl');
     }
 	
@@ -152,7 +155,26 @@ class Module_Register extends Base_Module
             $insert['username'] = $_POST['username'];
             $insert['email'] = $_POST['email'];
             $insert['secret_key'] = createKey(16);
-            $insert['password'] = sha1($insert['secret_key'] . $_POST['password'] . SECRET_KEY);
+            
+            switch ($this->config['security']['hashing']) {
+                
+                // PBKDF2
+                case 2 :
+                    $insert['password']= createPBKDF2(array($_POST['password'], $insert['secret_key']));
+                    break;
+                
+                // bcrypt
+               case 4 :
+                   $insert['password'] = createBcrypt(array($_POST['password'], $insert['secret_key']));
+                   break;
+               
+               // Oldschool
+               case 0 :
+               default :
+                    $insert['password'] = sha1($insert['secret_key'] . $_POST['password'] . SECRET_KEY);
+                    break;
+            }
+            
             $insert['registered'] = time();
 
             global $hooks;
