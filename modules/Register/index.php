@@ -46,8 +46,6 @@ class Module_Register extends Base_Module
             $this->tpl->assign('GET_USERNAME', $_GET['username']);
         if (!empty($_GET['email']))
             $this->tpl->assign('GET_EMAIL', $_GET['email']);
-        if (!empty($_GET['email2']))
-            $this->tpl->assign('GET_EMAIL2', $_GET['email2']);
 		
         if (array_key_exists('msg', $_GET)) 
             $this->tpl->assign('MSG', $_GET['msg']);
@@ -124,23 +122,6 @@ class Module_Register extends Base_Module
             $error = 1; //Set error check
         }
 	
-        if ($_POST['email2'] != $_POST['email'])
-        {
-            $errors[] = 'You didn\'t verify your email correctly!';
-            $error = 1;
-        }
-		
-        //Check verification code
-        if (empty($_POST['reg_verify']))
-        {
-            $errors[] = 'You didn\'t enter the verification code!';
-            $error = 1;
-        }
-        else if ($_SESSION['verify_code'] != sha1(strtoupper($_POST['reg_verify']) . SECRET_KEY))
-        {
-            $errors[] = 'You didn\'t enter the correct verification code!';
-            $error = 1;
-        }
 		
         //verify_code must NOT be used again.
         session_unset();
@@ -152,7 +133,7 @@ class Module_Register extends Base_Module
             unset($insert);
             $insert = Array();
             //Add new user to database
-            $insert['username'] = $_POST['username'];
+            $insert['username'] = $insert['alias'] = $_POST['username'];
             $insert['email'] = $_POST['email'];
             $insert['secret_key'] = createKey(16);
             
@@ -160,12 +141,12 @@ class Module_Register extends Base_Module
                 
                 // PBKDF2
                 case 2 :
-                    $insert['password']= createPBKDF2(array($_POST['password'], $insert['secret_key']));
+                    $insert['password']= createPBKDF2($_POST['password'], $insert['secret_key']);
                     break;
                 
                 // bcrypt
                case 4 :
-                   $insert['password'] = createBcrypt(array($_POST['password'], $insert['secret_key']));
+                   $insert['password'] = createBcrypt($_POST['password'], $insert['secret_key']);
                    break;
                
                // Oldschool
