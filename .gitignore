@@ -1,6 +1,3 @@
-/lib/ext/htmlpurifier/HTMLPurifier/DefinitionCache/Serializer/HTML/
-/smarty/templates_c/
 /templates/.compiled/
 /templates/.cache/
 /templates/.config/
-/install/
