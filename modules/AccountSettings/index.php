@@ -102,7 +102,7 @@ class Module_AccountSettings extends Base_Module
 		
 		// validate that the image is what it says it is.
 		if (function_exists('mime_content_type'))
-			$tmp_mime = mime_content_type($_FILES['avatar']['tmp']);
+			$tmp_mime = mime_content_type($_FILES['avatar']['tmp_name']);
 		else if (function_exists('finfo_open')) {
 			$finfo = finfo_open(FILEINFO_MIME_TYPE);
 			$tmp_mime = finfo_file($finfo, $_FILES['avatar']['tmp_name']);
