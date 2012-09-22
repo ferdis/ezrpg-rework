@@ -144,9 +144,11 @@ if (!isset($_GET['act'])) {
 CREATE TABLE IF NOT EXISTS `{$dbprefix}players` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `username` varchar(30) default NULL,
-  `password` varchar(40) default NULL,
+  `alias` varchar(30) default NULL,
+  `password` BLOB default NULL,
   `email` varchar(255) default NULL,
   `secret_key` text,
+  `avatar` BLOB default NULL
   `rank` smallint(5) unsigned NOT NULL default '1',
   `registered` int(11) unsigned default NULL,
   `last_active` int(11) unsigned default '0',
