@@ -139,6 +139,37 @@ class mysqli_adapter {
                     array_fill($params, $diff, '?');
                 }
 
+                //Sanitize parameters
+                for ($i = 0; $i < $count2; $i++) {
+                    $val = $params[$i];
+
+                    if (is_string($val)) {
+                        //magic quotes
+                        if (get_magic_quotes_gpc()) {
+                            $val = stripslashes($val);
+                        }
+
+                        //Below conditional has been commented out to enforce types
+                        //If a string was passed that was meant to be an integer, you must cast it to an int with intval() first.
+                        //Otherwise, strings of numbers will still be passed as a string, and surrounded with single quotes
+                        //if (!ctype_digit($val))
+                        //{
+                        $val = '\'' . $this->db->real_escape_string($val) . '\'';
+                        //} //Otherwise the string is acting as a digit, so leave it alone
+                    } else if (is_int($val) || is_float($val)) {
+                        //Value is an integer, no sanitation is necessary.
+                        //Only need to convert to string so the parameter can be concatenated onto the query string.
+                        //(Not really necessary, but otherwise this block would be empty ;])
+                        $val = strval($val);
+                    } else {
+                        //Parameter is not a valid type.
+                        $val = '?';
+                        //OR throw an SQL exception?
+                    }
+
+                    $params[$i] = $val;
+                }
+
                 $query = '';
                 //Reconstruct query
                 for ($i = 0; $i < $count2; $i++) {
@@ -155,7 +186,7 @@ class mysqli_adapter {
             //Execute query
             $result = $this->db->query($query);
             if ($result === false) { //If there was an error with the query
-                $this->error = $result->error;
+                $this->error = $this->db->error;
 
                 //If in debug mode, send exception, otherwise ignore
                 if (SHOW_ERRORS === 1) {
@@ -338,7 +369,7 @@ class mysqli_adapter {
             $this->connect();
 
         $table = str_replace('<ezrpg>', $this->prefix, $table);
-        $query = 'INSERT INTO ' . mysql_real_escape_string($table, $this->db) . ' (';
+        $query = 'INSERT INTO ' . $this->db->real_escape_string($table) . ' (';
 
         $cols = count($data);
         $part1 = ''; //List of column names
@@ -347,7 +378,7 @@ class mysqli_adapter {
         $i = 0; //Counter
         foreach ($data as $col => $val) {
             //Append column name
-            $part1 .= $this->db->real_escape_string($col, $this->db);
+            $part1 .= $this->db->real_escape_string($col);
 
             //Append a question mark and leave sanitation to the <execute> method through variable binding.
             $part2 .= '?';
@@ -368,7 +399,7 @@ class mysqli_adapter {
 
         $result = $this->execute($query, $params);
 
-        return $result->insert_id();
+        return $this->db->insert_id;
     }
 
     /*
