@@ -89,7 +89,7 @@ class mysqli_adapter {
 
     public function __destruct() {
         if ($this->isConnected)
-            $this->db->close($this->db);
+            $this->db->close();
     }
 
     /*
@@ -153,7 +153,7 @@ class mysqli_adapter {
                 echo $query, '<br />';;
 
             //Execute query
-            $result = $this->db->query($query, $this->db);
+            $result = $this->db->query($query);
             if ($result === false) { //If there was an error with the query
                 $this->error = $result->error;
 
@@ -408,7 +408,7 @@ class mysqli_adapter {
             } else {
                 $this->isConnected = true;
 
-                $db_selected = $this->select_db($this->dbname);
+                $db_selected = $this->db->select_db($this->dbname);
                 if ($db_selected === false) {
                     throw new DbException($this->dbname, DATABASE_ERROR);
                 } else {
