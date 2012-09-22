@@ -20,7 +20,7 @@ if (!defined('IN_EZRPG'))
  */
 
 function isUsername($username) {
-    if (strlen($username) < 3)
+    if (strlen($username) < 4)
         return false;
     if (!preg_match("/^[_a-zA-Z0-9]+$/", $username))
         return false;
@@ -40,7 +40,9 @@ function isUsername($username) {
  */
 
 function isPassword($password) {
-    if (strlen($password) < 3)
+    if (strlen($password) < 6)
+        return false;
+	if (!preg_match("/[a-zA-Z0-9\W]+/", $password))
         return false;
     return true;
 }
@@ -59,5 +61,3 @@ function isPassword($password) {
 function isEmail($email) {
     return filter_var($email, FILTER_VALIDATE_EMAIL);
 }
-
-?>

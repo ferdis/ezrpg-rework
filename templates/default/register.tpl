@@ -6,8 +6,11 @@
 Want to join the fun? Fill out the form below to register!
 </p>
 
-{if isset($MSG)}
-    <span class="msg">{$MSG}</span>
+{if isset($MSG_WARN)}
+    <span class="msg warn">{$MSG_WARN}</span>
+    <br />
+{elseif isset($MSG_FAIL)}
+    <span class="msg fail">{$MSG_FAIL}</span>
     <br />
 {/if}
 
@@ -16,9 +19,9 @@ Want to join the fun? Fill out the form below to register!
         <tr>
             <td valign=top>
                 <label>Username</label>
-                <input type="text" size="40" name="username"{if isset($GET_USERNAME)} value="{$GET_USERNAME}"{/if} zindex="1" />
+                <input type="text" size="40" name="username"{if isset($USERNAME)} value="{$USERNAME}"{/if} zindex="1" />
                 <label>Email</label>
-                <input type="text" size="40" name="email"{if isset($GET_EMAIL)} value="{$GET_EMAIL}"{/if} zindex="2" />
+                <input type="text" size="40" name="email"{if isset($EMAIL)} value="{$EMAIL}"{/if} zindex="2" />
             </td>
             <td valign=top>
                 <label>Password</label>
@@ -30,23 +33,17 @@ Want to join the fun? Fill out the form below to register!
         </tr>
         <tr>
             <td colspan=2 align="center">
-            <!--    <label>Enter The Code</label>
-                <img src="./captcha.php" /><br />
-                <input type="text" size="40" name="reg_verify" autocomplete="off" />
--->
+				<input type="hidden" name="verify" value="0" />
                 <br />
                 <input name="register" type="submit" value="Register" class="button" zindex="5" />
             </td>
         </tr>
                 
     </table>
-
-
-
-
-
-
-
 </form>
 
+<script>
+	$.run('ready', 'security.botCheck');
+</script>
+				
 {include file="footer.tpl"}

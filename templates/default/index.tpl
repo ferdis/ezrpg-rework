@@ -2,8 +2,14 @@
 
 <h1>Home</h1>
 
-{if isset($MSG)}
-    <span class="msg">{$MSG}</span>
+{if isset($MSG_WARN)}
+    <span class="msg info">{$MSG_WARN}</span>
+    <br />
+{elseif isset($MSG_FAIL)}
+    <span class="msg fail">{$MSG_FAIL}</span>
+    <br />
+{elseif isset($MSG_GOOD)}
+    <span class="msg good">{$MSG_GOOD}</span>
     <br />
 {/if}
 <div class="left">
