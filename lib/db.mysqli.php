@@ -5,8 +5,8 @@ if (!defined('IN_EZRPG'))
     exit;
 
 /*
-  Class: mysqli
-  Database abstraction class for MySQL Improved.
+  Class: mysql
+  Database abstraction class for MySQL.
 
   See Also:
   - <DbFactory>
@@ -41,7 +41,7 @@ class mysqli_adapter {
 
     /*
       Variable: $db
-      Contains a MySQL link identifier.
+      Contains a MySQLi link identifier.
      */
     protected $db;
 
@@ -89,7 +89,7 @@ class mysqli_adapter {
 
     public function __destruct() {
         if ($this->isConnected)
-            mysql_close($this->db);
+            $this->db->close($this->db);
     }
 
     /*
@@ -139,37 +139,6 @@ class mysqli_adapter {
                     array_fill($params, $diff, '?');
                 }
 
-                //Sanitize parameters
-                for ($i = 0; $i < $count2; $i++) {
-                    $val = $params[$i];
-
-                    if (is_string($val)) {
-                        //magic quotes
-                        if (get_magic_quotes_gpc()) {
-                            $val = stripslashes($val);
-                        }
-
-                        //Below conditional has been commented out to enforce types
-                        //If a string was passed that was meant to be an integer, you must cast it to an int with intval() first.
-                        //Otherwise, strings of numbers will still be passed as a string, and surrounded with single quotes
-                        //if (!ctype_digit($val))
-                        //{
-                        $val = '\'' . mysql_real_escape_string($val, $this->db) . '\'';
-                        //} //Otherwise the string is acting as a digit, so leave it alone
-                    } else if (is_int($val) || is_float($val)) {
-                        //Value is an integer, no sanitation is necessary.
-                        //Only need to convert to string so the parameter can be concatenated onto the query string.
-                        //(Not really necessary, but otherwise this block would be empty ;])
-                        $val = strval($val);
-                    } else {
-                        //Parameter is not a valid type.
-                        $val = '?';
-                        //OR throw an SQL exception?
-                    }
-
-                    $params[$i] = $val;
-                }
-
                 $query = '';
                 //Reconstruct query
                 for ($i = 0; $i < $count2; $i++) {
@@ -184,9 +153,9 @@ class mysqli_adapter {
                 echo $query, '<br />';;
 
             //Execute query
-            $result = mysql_query($query, $this->db);
+            $result = $this->db->query($query, $this->db);
             if ($result === false) { //If there was an error with the query
-                $this->error = mysql_error();
+                $this->error = $result->error;
 
                 //If in debug mode, send exception, otherwise ignore
                 if (SHOW_ERRORS === 1) {
@@ -228,8 +197,7 @@ class mysqli_adapter {
      */
 
     public function fetch(&$result) {
-        $ret = mysql_fetch_object($result);
-        return $ret;
+        return $result->fetch_object();
     }
 
     /*
@@ -253,8 +221,7 @@ class mysqli_adapter {
      */
 
     public function fetchArray(&$result) {
-        $ret = mysql_fetch_array($result);
-        return $ret;
+        return $this->fetch_array();
     }
 
     /*
@@ -324,7 +291,7 @@ class mysqli_adapter {
     public function fetchRow($query, $params = 0) {
         $result = $this->execute($query, $params);
         $ret = $this->fetch($result);
-        mysql_free_result($result);
+        $result->free();
         return $ret;
     }
 
@@ -340,7 +307,7 @@ class mysqli_adapter {
      */
 
     public function numRows(&$result) {
-        return mysql_num_rows($result);
+        return $result->num_rows;
     }
 
     /*
@@ -380,7 +347,7 @@ class mysqli_adapter {
         $i = 0; //Counter
         foreach ($data as $col => $val) {
             //Append column name
-            $part1 .= mysql_real_escape_string($col, $this->db);
+            $part1 .= $this->db->real_escape_string($col, $this->db);
 
             //Append a question mark and leave sanitation to the <execute> method through variable binding.
             $part2 .= '?';
@@ -399,9 +366,9 @@ class mysqli_adapter {
         $query .= $part1 . ') VALUES (';
         $query .= $part2 . ')';
 
-        $this->execute($query, $params);
+        $result = $this->execute($query, $params);
 
-        return mysql_insert_id($this->db);
+        return $result->insert_id();
     }
 
     /*
@@ -413,7 +380,7 @@ class mysqli_adapter {
      */
 
     public function affected() {
-        return mysql_affected_rows($this->db);
+        return $this->db->affected_rows;
     }
 
     /*
@@ -434,14 +401,15 @@ class mysqli_adapter {
 
     protected function connect() {
         if ($this->isConnected === false) {
-            $this->db = mysql_connect($this->host, $this->username, $this->password);
-            if (!$this->db) {
+            // Persistance is key
+            $this->db = mysqli_connect('p:' . $this->host, $this->username, $this->password);
+            if ($this->db === false) {
                 throw new DbException($this->db, SERVER_ERROR);
             } else {
                 $this->isConnected = true;
 
-                $db_selected = mysql_select_db($this->dbname);
-                if (!$db_selected) {
+                $db_selected = $this->select_db($this->dbname);
+                if ($db_selected === false) {
                     throw new DbException($this->dbname, DATABASE_ERROR);
                 } else {
                     return true;
@@ -451,6 +419,7 @@ class mysqli_adapter {
             return true;
         }
     }
+
 }
 
 ?>
