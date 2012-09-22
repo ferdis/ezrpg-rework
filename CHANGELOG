@@ -4,6 +4,8 @@ Although attempted, there is currently no guarantee of backwards compatibility w
 For a complete list of all changes since last release, please see https://github.com/nands/ezrpg/commits/master. 
 
 Version 0.1b (TBA)
+	- Modified template to show avatar as a favicon as well.
+	- Added anti-bot validation to the registration page.
 	- Added a jQuery library to add specific callbacks at runtime.
 	- Updated installer to accommodate new default style. 
 	- Improved UTF-8 support, set as PHP default and transfer encoding.
