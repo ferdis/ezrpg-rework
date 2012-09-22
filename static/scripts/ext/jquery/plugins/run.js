@@ -1,3 +1,10 @@
+/**
+ * A jQuery plugin to add executable functions to the DOM runtime.
+ * jQuery is simply used as a framework here.
+ * 
+ * @param	string	runlevel
+ * @param	mixed	callback	
+ */
 jQuery.run = function(runlevel, callback) {
 	
 	$ = this;
@@ -8,7 +15,7 @@ jQuery.run = function(runlevel, callback) {
 			var parts = callback.split('.');
 			callback = eval(parts[0]+'.'+parts[1]);
 		} else {
-			callback = callback;
+			callback = eval(callback);
 		}
 	}
 	
