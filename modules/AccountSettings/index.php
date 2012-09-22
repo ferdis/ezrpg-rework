@@ -3,93 +3,105 @@
 defined('IN_EZRPG') or exit;
 
 /*
-  Class: Module_AccountSettings
-  Lets the user change their password.
+Class: Module_AccountSettings
+Lets the user change their password.
 */
-class Module_AccountSettings extends Base_Module
-{
-    /*
-      Function: start
-      Begins the account settings page/
-    */
-    public function start()
-    {
-        //Require login
-        requireLogin();
+class Module_AccountSettings extends Base_Module {
+	/*
+	Function: start
+	Begins the account settings page
+	*/
+	public function start() {
+		//Require login
+		requireLogin();
 		
-		if(!array_key_exists('form', $_POST)) {
-			if (array_key_exists('msg', $_GET))
-						$this->tpl->assign('MSG', $_GET['msg']);
-				
+		if (!array_key_exists('form', $_POST)) {
 			$this->tpl->display('account_settings.tpl');
 			return true;
 		}
 		
 		switch ($_POST['form']) {
-			case 'password' :
+			case 'password':
 				$this->changePassword();
 				break;
 			
-			case 'avatar' : 
+			case 'avatar':
 				if (array_key_exists('remove_avatar', $_POST))
 					$this->removeAvatar();
 				else
 					$this->changeAvatar();
 				break;
 			
-			default :
+			default:
 				$this->tpl->display('account_settings.tpl');
 		}
 		
 		return true;
-    }
-
-    private function changePassword()
-    {
-        $msg = '';
-        if (empty($_POST['current_password']) || empty($_POST['new_password']) || empty($_POST['new_password2']))
-        {
-            $msg = 'You forgot to fill in something!';
-        }
-        else
-        {
-            $check = sha1($this->player->secret_key . $_POST['current_password'] . SECRET_KEY);
-            if ($check != $this->player->password)
-            {
-                $msg = 'The password you entered does not match this account\'s password.';
-            }
-            else if (!isPassword($_POST['new_password']))
-            {
-                $msg = 'Your password must be longer than 3 characters!';
-            }
-            else if ($_POST['new_password'] != $_POST['new_password2'])
-            {
-                $msg = 'You didn\'t confirm your new password correctly!';
-            }
-            else
-            {
-                $new_password = sha1($this->player->secret_key . $_POST['new_password2'] . SECRET_KEY);
-                $this->db->execute('UPDATE `<ezrpg>players` SET `password`=? WHERE `id`=?', array($new_password, $this->player->id));
-                $msg = 'You have changed your password.';
-            }
-        }
-        
-        header('Location: index.php?mod=AccountSettings&msg=' . urlencode($msg));
-    }
+	}
+	
+	private function changePassword() {
+		$errors = array(
+			'warn' => '',
+			'fail' => '',
+			'good' => ''
+		);
+		
+		if (empty($_POST['current_password']) || empty($_POST['new_password']) || empty($_POST['new_password2'])) {
+			$errors['warn'] = 'You forgot to fill in something!';
+		} else {
+			$check = sha1($this->player->secret_key . $_POST['current_password'] . SECRET_KEY);
+			if ($check != $this->player->password) {
+				$errors['fail'] = 'The password you entered does not match this account\'s password.';
+			} else if (!isPassword($_POST['new_password'])) {
+				$errors['warn'] = 'Your password must be longer than 3 characters!';
+			} else if ($_POST['new_password'] != $_POST['new_password2']) {
+				$errors['warn'] = 'You didn\'t confirm your new password correctly!';
+			} else {
+				// password type switch
+				switch ($this->config['security']['hashing']) {
+					// PBKDF2
+					case 2:
+						$new_password = createPBKDF2($_POST['password'], $insert['secret_key']);
+						break;
+					
+					// bcrypt
+					case 4:
+						$new_password = createBcrypt($_POST['password'], $insert['secret_key']);
+						break;
+					
+					// Oldschool
+					case 0:
+					default:
+						$new_password = sha1($insert['secret_key'] . $_POST['password'] . SECRET_KEY);
+						break;
+				}
+				
+				$this->db->execute('UPDATE `<ezrpg>players` SET `password`=? WHERE `id`=?', array(
+					$new_password,
+					$this->player->id
+				));
+				$errors['good'] = 'You have changed your password.';
+			}
+		}
+		
+		foreach ($errors as $err_type => $message)
+			$this->setMessage($message, $err_type);
+		
+		header('Location: index.php?mod=AccountSettings');
+	}
 	
 	private function changeAvatar() {
-		
 		// Check that something is present for us to handle.
 		if (!array_key_exists('avatar', $_FILES)) {
-			$msg = 'You forgot to select an image!';
-			header('Location: index.php?mod=AccountSettings&msg=' . urlencode($msg));
+			$this->setMessage('You forgot to select an image!', 'info');
+			header('Location: index.php?mod=AccountSettings');
 			return false;
 		}
 		
 		// check that error equal 0, or else something went wrong.
 		if ($_FILES['avatar']['error'] !== 0) {
-			$msg = 'Something went wrong, please try again.';
-			header('Location: index.php?mod=AccountSettings&msg=' . urlencode($msg));
+			$this->setMessage('Something went wrong, please try again.', 'fail');
+			header('Location: index.php?mod=AccountSettings');
 			return false;
 		}
 		
@@ -104,7 +116,7 @@ class Module_AccountSettings extends Base_Module
 		if (function_exists('mime_content_type'))
 			$tmp_mime = mime_content_type($_FILES['avatar']['tmp_name']);
 		else if (function_exists('finfo_open')) {
-			$finfo = finfo_open(FILEINFO_MIME_TYPE);
+			$finfo    = finfo_open(FILEINFO_MIME_TYPE);
 			$tmp_mime = finfo_file($finfo, $_FILES['avatar']['tmp_name']);
 			finfo_close($finfo);
 		} else {
@@ -114,9 +126,9 @@ class Module_AccountSettings extends Base_Module
 		
 		// validate according to it.
 		if (in_array($tmp_mime, $allowed_types) === false) {
-			$msg = 'We only allow certain image files to be uploaded.';
-			header('Location: index.php?mod=AccountSettings&msg=' . urlencode($msg));
-			return false;			
+			$this->setMessage('We only allow certain image files to be uploaded.', 'warn');
+			header('Location: index.php?mod=AccountSettings');
+			return false;
 		}
 		
 		// check that the file isn't larger than something we can handle. 
@@ -124,7 +136,8 @@ class Module_AccountSettings extends Base_Module
 		if ($_FILES['avatar']['size'] > $max_size) {
 			$msg = 'The image you uploaded is too large, we allow images of up to ' . round($max_size / 1024, 2) . ' KiB';
 			$msg .= '.<br />Your\'s was ' . round($_FILES['avatar']['size'] / 1024, 2) . ' KiB';
-			header('Location: index.php?mod=AccountSettings&msg=' . urlencode($msg));
+			$this->setMessage($msg, 'warn');
+			header('Location: index.php?mod=AccountSettings');
 			return false;
 		}
 		
@@ -138,23 +151,29 @@ class Module_AccountSettings extends Base_Module
 		
 		// update our player's record.
 		$sql = 'UPDATE `<ezrpg>players` SET `avatar`=? WHERE `id`=?';
-		$this->db->execute($sql, array($url, $this->player->id));	
+		$this->db->execute($sql, array(
+			$url,
+			$this->player->id
+		));
 		
 		// keep the file, PHP will delete it later in any case.
 		// redirect the player.
-		$msg = 'Your avatar has been updated!';
-		header('Location: index.php?mod=AccountSettings&msg=' . urlencode($msg));
+		$this->setMessage('Your avatar has been updated!', 'good');
+		header('Location: index.php?mod=AccountSettings');
+		
 		return false;
 	}
 	
 	private function removeAvatar() {
 		$sql = 'UPDATE `<ezrpg>players` SET `avatar`=NULL WHERE `id`=?';
-		$this->db->execute($sql, array($this->player->id));	
+		$this->db->execute($sql, array(
+			$this->player->id
+		));
 		
 		// redirect the player.
-		$msg = 'Your avatar has been removed!';
-		header('Location: index.php?mod=AccountSettings&msg=' . urlencode($msg));
+		$this->setMessage('Your avatar has been removed!', 'good');
+		header('Location: index.php?mod=AccountSettings');
+		
 		return false;
 	}
 }
-?>
