@@ -4,8 +4,14 @@
 
 <p>Here you can manage your account details.</p>
 
-{if isset($MSG)}
-	<span class="msg">{$MSG}</span>
+{if isset($MSG_INFO)}
+	<span class="msg info">{$MSG_INFO}</span>
+{elseif isset($MSG_WARN)}
+	<span class="msg warn">{$MSG_WARN}</span>
+{elseif isset($MSG_FAIL)}
+	<span class="msg fail">{$MSG_FAIL}</span>
+{elseif isset($MSG_GOOD)}
+	<span class="msg good">{$MSG_GOOD}</span>
 {/if}
 
 <br />

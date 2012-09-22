@@ -2,6 +2,10 @@
 
 <h1>Stat Points</h1>
 
+{if isset($MSG_GOOD)}
+	<span class="msg good">{$MSG_GOOD}</span>
+{/if}
+
 <p>
 Here you can use your stat points to increase your stats! You have <strong>{$player->stat_points}</strong> points to use!
 <br /><br />

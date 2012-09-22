@@ -69,7 +69,7 @@ class Module_SessionExpired extends Base_Module
 				exit;
 			}
 			
-			$this->tpl->assign('MSG', 'Password entered is invalid!<br />You have ' . (3 - $_SESSION['pwd_enter_attempts']) . ' attempts left before you are automatically logged out.');			
+			$this->tpl->assign('MSG_WARN', 'Password entered is invalid!<br />You have ' . (3 - $_SESSION['pwd_enter_attempts']) . ' attempts left before you are automatically logged out.');			
 		}
 	}
 }

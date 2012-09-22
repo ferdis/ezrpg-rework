@@ -1,5 +1,9 @@
 {include file="header.tpl" TITLE="Event Log"}
 
+{if isset($MSG_GOOD)}
+	<span class="msg good">{$MSG_GOOD}</span>
+{/if}
+
 {if $logs}
 	<form method="post" action="index.php?mod=EventLog&act=clear">
 	<input type="submit" value="Clear Messages" />

@@ -49,8 +49,27 @@ class Module_AccountSettings extends Base_Module {
 		if (empty($_POST['current_password']) || empty($_POST['new_password']) || empty($_POST['new_password2'])) {
 			$errors['warn'] = 'You forgot to fill in something!';
 		} else {
-			$check = sha1($this->player->secret_key . $_POST['current_password'] . SECRET_KEY);
-			if ($check != $this->player->password) {
+			
+			switch ($this->config['security']['hashing']) {
+                
+                // PBKDF2
+                case 2 :
+                    $check = comparePBKDF2(array($_POST['password'], $player->secret_key), $player->password);
+                    break;
+                
+                // bcrypt
+               case 4 :
+                   $check = compareBcrypt(array($_POST['password'], $player->secret_key), $player->password);
+                   break;
+               
+               // Oldschool
+               case 0 :
+               default :
+                    $check = $player->password === sha1($player->secret_key . $_POST['password'] . SECRET_KEY);
+                    break;
+            }
+			
+			if ($check !== true) {
 				$errors['fail'] = 'The password you entered does not match this account\'s password.';
 			} else if (!isPassword($_POST['new_password'])) {
 				$errors['warn'] = 'Your password must be longer than 3 characters!';

@@ -1,7 +1,11 @@
 {include file="admin/header.tpl" TITLE="Members Admin"}
 
 <h1>Members</h1>
-
+{if isset($MSG_INFO)}
+	<span class="msg info">{$MSG_INFO}</span>
+{elseif isset($MSG_FAIL)}
+	<span class="msg fail">{$MSG_FAIL}</span>
+{/if}
 <p>
 <strong>Total Players: </strong> {$playercount}
 </p>

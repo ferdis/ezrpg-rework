@@ -2,6 +2,10 @@
 
 <h1>Home</h1>
 
+{if isset($MSG_INFO)}
+	<span class="msg info">{$MSG_INFO}</span>
+{/if}
+
 <div class="left">
 <p>
 <strong>Username</strong>: {$player->username}<br />
@@ -9,6 +13,7 @@
 <strong>Registered</strong>: {$player->registered|date_format:'%B %e, %Y %l:%M %p'}<br />
 <strong>Kills/Deaths</strong>: {$player->kills}/{$player->deaths}<br />
 <br />
+
 {if $player->stat_points > 0}
 You have stat points left over!<br />
 <a href="index.php?mod=StatPoints"><strong>Spend them now!</strong></a>

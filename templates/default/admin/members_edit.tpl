@@ -2,6 +2,10 @@
 
 <h1>Edit Member</h1>
 
+{if isset($MSG_WARN)}
+	<span class="msg warn">{$MSG_WARN}</span>
+{/if}
+
 <form method="post" action="index.php?mod=Members&act=edit&id={$member->id}">
 
 <label>Username</label>

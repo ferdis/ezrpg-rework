@@ -4,6 +4,8 @@ Although attempted, there is currently no guarantee of backwards compatibility w
 For a complete list of all changes since last release, please see https://github.com/nands/ezrpg/commits/master. 
 
 Version 0.1b (TBA)
+	- Fixed a few bugs in administrator panel where hooks aren't correct executed.
+	- Added a better system to send messages between scripts, GET_MSG is now obsolete.
 	- Modified template to show avatar as a favicon as well.
 	- Added anti-bot validation to the registration page.
 	- Added a jQuery library to add specific callbacks at runtime.
