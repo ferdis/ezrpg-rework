@@ -14,5 +14,8 @@ var security = {
 		$('input[name=email]').keyup(function(){
 			countUp();
 		});
+		
+		// fixes a bug wherein if the user is redirected, the counter doesn't count.
+		countUp();
 	}
 };
