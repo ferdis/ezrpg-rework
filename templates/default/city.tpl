@@ -19,7 +19,7 @@ Inventory<br />
 <h3>World</h3>
 <p>
 <a href="index.php?mod=Members">Members List</a><br />
-Top Players<br />
+<a href="index.php?mod=TopPlayers">Top Players</a><br />
 Game Statistics<br />
 Forum<br />
 </p>
