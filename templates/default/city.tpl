@@ -27,6 +27,7 @@ Forum<br />
 
 <h3>City</h3>
 <p>
+<a href="index.php?mod=Bank">Bank</a><br />
 Battle<br />
 Item Shop<br />
 </p>

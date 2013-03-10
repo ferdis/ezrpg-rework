@@ -1,3 +1,5 @@
+!.gitignore
 /templates/.compiled/
 /templates/.cache/
 /templates/.config/
+config.php

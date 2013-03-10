@@ -154,6 +154,7 @@ CREATE TABLE IF NOT EXISTS `{$dbprefix}players` (
   `last_active` int(11) unsigned default '0',
   `last_login` int(11) unsigned default '0',
   `money` int(11) unsigned default '100',
+  `bank` int(11) unsigned default '0',
   `level` int(11) unsigned default '1',
   `stat_points` int(11) unsigned default '10',
   `exp` int(11) unsigned default '0',
@@ -261,7 +262,7 @@ define('DEBUG_MODE', 0);
 ?>
 CONF;
 			file_put_contents('config.php', $config);
-			echo '<p>Config file written.</p>';
+			echo '<p>Config file written.</p>';                        
 			echo '<p><a href="install.php?act=3">Continue to next step</a></p>';
 			displayFooter();
 			exit;
