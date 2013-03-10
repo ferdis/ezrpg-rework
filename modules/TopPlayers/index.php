@@ -7,7 +7,7 @@ defined('IN_EZRPG') or exit;
  * Top Players
  * 
  * Displays top 10 players, and can be ordered by money and level. 
- * @author Aventoro
+ * @author Aventro
  * @date 10 Mar 2013
  */
 class Module_TopPlayers extends Base_Module {
