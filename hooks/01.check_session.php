@@ -6,7 +6,7 @@ defined('IN_EZRPG') or exit(1);
 $hooks->add_hook('player', 'check_session', 0);
 
 //Player hook to check the session and get player data
-function hook_check_session($db, $config, &$tpl, $player, $args = 0) {
+function hook_check_session($db, $config, $tpl, $player, $args = 0) {
     
     // we follow a "guilty" until proven otherwise approach.
 	$authenticated = false;

@@ -3,7 +3,7 @@ defined('IN_EZRPG') or exit;
 
 $hooks->add_hook('player', 'check_stats', 2);
 
-function hook_check_stats($db, $config, &$tpl, $player, $args = 0)
+function hook_check_stats($db, $config, $tpl, $player, $args = 0)
 {
     if ($args === 0 || LOGGED_IN == false)
         return $args;
