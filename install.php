@@ -148,7 +148,7 @@ CREATE TABLE IF NOT EXISTS `{$dbprefix}players` (
   `password` BLOB default NULL,
   `email` varchar(255) default NULL,
   `secret_key` text,
-  `avatar` BLOB default NULL
+  `avatar` BLOB default NULL,
   `rank` smallint(5) unsigned NOT NULL default '1',
   `registered` int(11) unsigned default NULL,
   `last_active` int(11) unsigned default '0',
@@ -174,7 +174,7 @@ CREATE TABLE IF NOT EXISTS `{$dbprefix}players` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 QUERY;
-			mysql_query($query1) or die('Something went wrong.');
+			mysql_query($query1) or die('Something went wrong with query 1.<pre>' . mysql_error() . "\n\n" . $query1);
 
 			$query2 = <<<QUERY
 CREATE TABLE IF NOT EXISTS `{$dbprefix}player_log` (
@@ -188,7 +188,7 @@ CREATE TABLE IF NOT EXISTS `{$dbprefix}player_log` (
   KEY `new_logs` (`player`,`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 QUERY;
-			mysql_query($query2) or die('Something went wrong.');
+			mysql_query($query2) or die('Something went wrong with query 2.');
 
 			echo '<p>Tables installed.</p>';
 
@@ -229,7 +229,8 @@ if (!defined('IN_EZRPG'))
         'driver'    => 'mysqli'
     ),
     'security' => array(
-        'hashing'   => {$hashing}
+        'hashing'   => {$hashing},
+	'session_timeout' => 300
     )
 );
 

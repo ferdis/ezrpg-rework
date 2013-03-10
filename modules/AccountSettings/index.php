@@ -151,7 +151,7 @@ class Module_AccountSettings extends Base_Module {
 		}
 		
 		// check that the file isn't larger than something we can handle. 
-		$max_size = 35 * 1024; // in kB
+		$max_size = 1024 * 1024; // in kB
 		if ($_FILES['avatar']['size'] > $max_size) {
 			$msg = 'The image you uploaded is too large, we allow images of up to ' . round($max_size / 1024, 2) . ' KiB';
 			$msg .= '.<br />Your\'s was ' . round($_FILES['avatar']['size'] / 1024, 2) . ' KiB';
